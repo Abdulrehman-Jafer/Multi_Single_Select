@@ -17,14 +17,17 @@ export const Select = ({
 
   const containerRefrence = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setMouseOverIndex(0);
+  }, [showOptionsBox]);
+
   const clearOptions = () => {
-    multi ? changeSelectedOption([]) : changeSelectedOption(undefined);
+    multi && changeSelectedOption([])
   };
 
   const optionSelector = (option: SelectOption) => {
     if (multi) {
-      if (selectedOption.includes(option)) return;
-      else selectedOption.push(option);
+      !selectedOption.includes(option) && selectedOption.push(option);
     } else {
       changeSelectedOption(option);
     }
@@ -34,9 +37,11 @@ export const Select = ({
     if (multi) return changeSelectedOption(selectedOption.filter((value) => value !== para));
   };
 
-  useEffect(() => {
-    setMouseOverIndex(0);
-  }, [showOptionsBox]);
+  const checkIsSelected = (option: SelectOption) => {
+    return multi
+      ? selectedOption.includes(option)
+      : option.label === selectedOption?.label;
+  };
 
   useEffect(() => {
     const KeyBoardEvent = (event: KeyboardEvent) => {
@@ -70,11 +75,6 @@ export const Select = ({
     };
   }, [mouseOverIndex, showOptionsBox]);
 
-  const checkIsSelected = (option: SelectOption) => {
-    return multi
-      ? selectedOption.includes(option)
-      : option.label === selectedOption?.label;
-  };
 
   return (
     <div
@@ -84,11 +84,7 @@ export const Select = ({
         setShowOptionsBox(true);
       }}
       tabIndex={0}
-      className={`border-2
-       relative w-[25em] min-h-[1.5em] 
-       border-solid border-zinc-500 
-       flex items-center gap-[.5em] p-[.5em]
-       rounded-md outline-none focus:border-blue-600`}
+      className={`border-2 relative w-[25em] min-h-[1.5em] border-solid border-zinc-500 flex items-center gap-[.5em] p-[.5em] rounded-md outline-none focus:border-blue-600 cursor-default`}
     >
       {multi ? (
         <div className="flex-1 flex flex-wrap gap-2">
