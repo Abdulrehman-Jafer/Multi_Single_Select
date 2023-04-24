@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import { SelectOption } from "./types"
-import { SelectProps } from "./types"
+import { SelectOption, SelectProps } from "./types"
+import SelectedOptions from "./SelectedOptions";
+import OptionsList from "./OptionsList";
 
 
 export const Select = ({
@@ -16,30 +17,21 @@ export const Select = ({
 
   const containerRefrence = useRef<HTMLDivElement>(null);
 
-  const clearOption = () => {
-    if (multi) {
-      changeSelectedOption([]);
-    } else {
-      changeSelectedOption(undefined);
-    }
+  const clearOptions = () => {
+    multi ? changeSelectedOption([]) : changeSelectedOption(undefined);
   };
 
   const optionSelector = (option: SelectOption) => {
-    if (!multi) {
-      changeSelectedOption(option);
+    if (multi) {
+      if (selectedOption.includes(option)) return;
+      else selectedOption.push(option);
     } else {
-      if (selectedOption.includes(option)) {
-        return;
-      } else {
-        selectedOption.push(option);
-      }
+      changeSelectedOption(option);
     }
   };
 
   const optionDeselector = (para: SelectOption) => {
-    if (multi) {
-      changeSelectedOption(selectedOption.filter((value) => value !== para));
-    }
+    if (multi) return changeSelectedOption(selectedOption.filter((value) => value !== para));
   };
 
   useEffect(() => {
@@ -102,69 +94,34 @@ export const Select = ({
         <div className="flex-1 flex flex-wrap gap-2">
           {
             selectedOption.length > 0 ?
-              selectedOption.map((value) => {
+              selectedOption.map((option) => {
                 return (
-                  <div
-                    onClick={(event) => {
-                      event.stopPropagation();
-                    }}
-                    key={value.value}
-                    className={`px-1 rounded-sm 
-                border border-black flex items-center 
-                justify-between hover:bg-red-50 hover:border-red-200`}
-                  >
-                    <span>{value.label}</span>
-                    <span
-                      className="translate-y-[3%] text-[1.2em] text-gray-600 cursor-pointer hover:text-black"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        optionDeselector(value);
-                      }}
-                    >
-                      {<RxCross2 />}
-                    </span>
-                  </div>
+                  <SelectedOptions key={crypto.randomUUID()} option={option} optionDeselector={optionDeselector} />
                 );
-              }) : <span className="text-slate-400">Please Select some tags</span>}
+              }) : <span className="text-slate-400">You do not have any selected tag!</span>}
         </div>
       ) : (
         <span className="flex-1">{selectedOption?.label}</span>
       )}
       <button
         onClick={(e) => {
-          clearOption();
           e.stopPropagation();
+          clearOptions();
         }}
         className="text-[1.2em] text-gray-600 cursor-pointer hover:text-black"
       >
-        {multi && selectedOption.length > 0 ?
-          <RxCross2 /> : ""}
+        {multi && selectedOption.length > 0 && <RxCross2 />}
       </button>
       <div className="w-[0.1em] bg-gray-500 self-stretch"></div>
       <button className="translate-y-[3%] text-[1.2em] text-gray-600 cursor-pointer hover:text-black">{<MdOutlineArrowDropDown />}</button>
-      <ul
-        className={`max-h-[15em] overflow-y-auto border 
-      border-black rounded-sm w-[100%] 
-        absolute left-0 top-[107%] 
-      bg-white z-[100] ${showOptionsBox ? "block" : "hidden"}`}
-      >
-        {options.map((option, index) => (
-          <li
-            onClick={(event) => {
-              event.stopPropagation();
-              optionSelector(option);
-              setShowOptionsBox(false);
-            }}
-            onMouseEnter={() => setMouseOverIndex(index)}
-            key={option.value}
-            className={`px-[.25em] py-[.5em] cursor-pointer 
-              ${checkIsSelected(option) ? "bg-blue-500" : ""}
-              ${index === mouseOverIndex ? "bg-blue-700" : ""}`}
-          >
-            {option.label}
-          </li>
-        ))}
-      </ul>
+      <OptionsList
+        checkIsSelected={checkIsSelected}
+        mouseOverIndex={mouseOverIndex}
+        optionSelector={optionSelector}
+        setMouseOverIndex={setMouseOverIndex}
+        setShowOptionsBox={setShowOptionsBox}
+        showOptionsBox={showOptionsBox}
+        options={options} />
     </div>
   );
 };

@@ -3,27 +3,11 @@ import { Select } from "./Select";
 import { SelectOption } from "./types";
 
 function App() {
-  const option1: SelectOption = {
-    label: "First",
-    value: 1,
-  };
-
-  const option2: SelectOption = {
-    label: "Second",
-    value: 2,
-  };
-  const option3: SelectOption = {
-    label: "Third",
-    value: 3,
-  };
-  const option4: SelectOption = {
-    label: "Fourth",
-    value: 4,
-  };
-  const option5: SelectOption = {
-    label: "Fifth",
-    value: 5,
-  };
+  const option1: SelectOption = { label: "First", value: 1 };
+  const option2: SelectOption = { label: "Second", value: 2 };
+  const option3: SelectOption = { label: "Third", value: 3 };
+  const option4: SelectOption = { label: "Fourth", value: 4 };
+  const option5: SelectOption = { label: "Fifth", value: 5 };
 
   const options: SelectOption[] = [option1, option2, option3, option4, option5];
   const options2: SelectOption[] = [option1];
